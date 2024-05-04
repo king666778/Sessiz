@@ -1,0 +1,44 @@
+import bs
+import ba
+import _ba
+
+class MutePlayerMod:
+    def __init__(self):
+        self._muted_players = set()
+
+        # Enable the module
+        self.enable()
+
+    def enable(self):
+        # Listen for the event when a player's name is pressed
+        self._player_press_listener = bs.register_gamepad_press_callback(self.on_player_press)
+
+    def disable(self):
+        # Disable the module
+        if self._player_press_listener is not None:
+            self._player_press_listener.disconnect()
+            self._player_press_listener = None
+
+    def on_player_press(self, player):
+        # Function to be called when a player's name is pressed
+        if player in self._muted_players:
+            # If the player is muted, unmute them
+            self.unmute_player(player)
+        else:
+            # If the player is not muted, mute them
+            self.mute_player(player)
+
+    def mute_player(self, player):
+        # Mute the player
+        bs.screenMessage("Player muted: {}".format(player.getName()), color=(1, 0, 0))
+        self._muted_players.add(player)
+
+    def unmute_player(self, player):
+        # Unmute the player
+        bs.screenMessage("Player unmuted: {}".format(player.getName()), color=(0, 1, 0))
+        self._muted_players.remove(player)
+
+# Create and enable the module
+mute_player_mod = MutePlayerMod()
+
+# Don't forget to call ba.cleanup() to disable the module
